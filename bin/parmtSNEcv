@@ -83,6 +83,8 @@ intopname = args.intop
 boxx = args.boxx
 boxy = args.boxy
 boxz = args.boxz
+embed_dim = args.embed_dim
+nofit = args.nofit
 
 if args.layers < 1 or args.layers > 3:
   print("ERROR: -layers must be 1-3, for deeper learning contact authors")
@@ -121,7 +123,7 @@ actfun2 = args.actfun2
 actfun3 = args.actfun3
 optim = args.optim
 epochs = args.epochs
-batch_size = args.batch
+batch_size = args.batch_size
 if args.ofile[-4:] == '.txt':
   ofilename = args.ofile
 elif len(args.ofile)>0:
