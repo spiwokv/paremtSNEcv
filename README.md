@@ -1,2 +1,3 @@
-# paremtSNEcv
+# parmtSNEcv
+
 Parametric tSNE collective variable
