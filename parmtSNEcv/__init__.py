@@ -262,10 +262,10 @@ def parmtSNEcollectivevariable(infilename='', intopname='', embed_dim=2,
         toprint = toprint[:-1] + " PERIODIC=NO\n"
         ofile.write(toprint)
       for i in range(embed_dim):
-        if codecvs.layers[2].get_weights()[1][0,i]>0.0:
-          ofile.write("l2r_%i: MATHEVAL ARG=l2 FUNC=(x+%0.6f) PERIODIC=NO\n" % (i+1,codecvs.layers[2].get_weights()[1][0,i]))
+        if codecvs.layers[2].get_weights()[1][i]>0.0:
+          ofile.write("l2r_%i: MATHEVAL ARG=l2 FUNC=(x+%0.6f) PERIODIC=NO\n" % (i+1,codecvs.layers[2].get_weights()[1][i]))
         else:
-          ofile.write("l2r_%i: MATHEVAL ARG=l2 FUNC=(x-%0.6f) PERIODIC=NO\n" % (i+1,-codecvs.layers[2].get_weights()[1][0,i]))
+          ofile.write("l2r_%i: MATHEVAL ARG=l2 FUNC=(x-%0.6f) PERIODIC=NO\n" % (i+1,-codecvs.layers[2].get_weights()[1][i]))
       toprint = "PRINT ARG="
       for i in range(embed_dim):
         toprint = toprint + "l2r_" + str(i+1) + ","
@@ -322,10 +322,10 @@ def parmtSNEcollectivevariable(infilename='', intopname='', embed_dim=2,
         toprint = toprint[:-1] + " PERIODIC=NO\n"
         ofile.write(toprint)
       for i in range(embed_dim):
-        if codecvs.layers[3].get_weights()[1][0,i]>0.0:
-          ofile.write("l3r_%i: MATHEVAL ARG=l3 FUNC=(x+%0.6f) PERIODIC=NO\n" % (i+1,codecvs.layers[3].get_weights()[1][0,i]))
+        if codecvs.layers[3].get_weights()[1][i]>0.0:
+          ofile.write("l3r_%i: MATHEVAL ARG=l3 FUNC=(x+%0.6f) PERIODIC=NO\n" % (i+1,codecvs.layers[3].get_weights()[1][i]))
         else:
-          ofile.write("l3r_%i: MATHEVAL ARG=l3 FUNC=(x-%0.6f) PERIODIC=NO\n" % (i+1,-codecvs.layers[3].get_weights()[1][0,i]))
+          ofile.write("l3r_%i: MATHEVAL ARG=l3 FUNC=(x-%0.6f) PERIODIC=NO\n" % (i+1,-codecvs.layers[3].get_weights()[1][i]))
       toprint = "PRINT ARG="
       for i in range(embed_dim):
         toprint = toprint + "l3r_" + str(i+1) + ","
@@ -402,15 +402,15 @@ def parmtSNEcollectivevariable(infilename='', intopname='', embed_dim=2,
         toprint = toprint[:-1] + " PERIODIC=NO\n"
         ofile.write(toprint)
       for i in range(embed_dim):
-        if codecvs.layers[4].get_weights()[1][0,i]>0.0:
-          ofile.write("l4r_%i: MATHEVAL ARG=l4 FUNC=(x+%0.6f) PERIODIC=NO\n" % (i+1,codecvs.layers[4].get_weights()[1][0,i]))
+        if codecvs.layers[4].get_weights()[1][i]>0.0:
+          ofile.write("l4r_%i: MATHEVAL ARG=l4 FUNC=(x+%0.6f) PERIODIC=NO\n" % (i+1,codecvs.layers[4].get_weights()[1][i]))
         else:
-          ofile.write("l4r_%i: MATHEVAL ARG=l4 FUNC=(x-%0.6f) PERIODIC=NO\n" % (i+1,-codecvs.layers[4].get_weights()[1][0,i]))
+          ofile.write("l4r_%i: MATHEVAL ARG=l4 FUNC=(x-%0.6f) PERIODIC=NO\n" % (i+1,-codecvs.layers[4].get_weights()[1][i]))
       toprint = "PRINT ARG="
       for i in range(embed_dim):
         toprint = toprint + "l4r_" + str(i+1) + ","
       toprint = toprint[:-1] + " STRIDE=100 FILE=COLVAR\n"
       ofile.write(toprint)
     ofile.close()
-  return codecvs, np.corrcoef(cvs,coded_cvs[:,0])[0,1]
+  return coded_cvs
 
