@@ -85,6 +85,13 @@ boxy = args.boxy
 boxz = args.boxz
 embed_dim = args.embed_dim
 nofit = args.nofit
+if args.nofit == "True":
+  nofit = 1
+elif args.nofit == "False":
+  nofit = 0
+else:
+  print("ERROR: -nofit %s not understood" % args.nofit)
+  exit(0)
 
 if args.layers < 1 or args.layers > 3:
   print("ERROR: -layers must be 1-3, for deeper learning contact authors")

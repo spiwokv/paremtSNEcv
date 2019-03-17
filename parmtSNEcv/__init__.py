@@ -132,11 +132,12 @@ def parmtSNEcollectivevariable(infilename='', intopname='', embed_dim=2,
     print("ERROR: Some of atom has coordinate higher than box size (i.e. it is outside the box)")
     exit(0)
 
-  if boxx > 2.0*np.amax(traj.xyz[:,:,0]) or boxy > 2.0*np.amax(traj.xyz[:,:,0]) or boxz > 2.0*np.amax(traj.xyz[:,:,0]):
+  if boxx > 2.0*np.amax(traj.xyz[:,:,0]) or boxy > 2.0*np.amax(traj.xyz[:,:,1]) or boxz > 2.0*np.amax(traj.xyz[:,:,2]):
     print("WARNING: Box size is bigger than 2x of highest coordinate,")
     print("maybe the box is too big or the molecule is not centered")
 
   maxbox = max([boxx, boxy, boxz])
+  traj2 = traj2/maxbox
 
   n = trajsize[0]
   if batch_size > 0:
@@ -151,12 +152,12 @@ def parmtSNEcollectivevariable(infilename='', intopname='', embed_dim=2,
   # Model building
   print "Building model"
   input_coord = krs.layers.Input(shape=(trajsize[1]*3,))
-  encoded = krs.layers.Dense(layer1, activation=actfun1)(input_coord)
+  encoded = krs.layers.Dense(layer1, activation=actfun1, use_bias=False)(input_coord)
   if layers == 3:
-    encoded = krs.layers.Dense(layer2, activation=actfun2)(encoded)
-    encoded = krs.layers.Dense(layer3, activation=actfun3)(encoded)
+    encoded = krs.layers.Dense(layer2, activation=actfun2, use_bias=False)(encoded)
+    encoded = krs.layers.Dense(layer3, activation=actfun3, use_bias=False)(encoded)
   if layers == 2:
-    encoded = krs.layers.Dense(layer2, activation=actfun2)(encoded)
+    encoded = krs.layers.Dense(layer2, activation=actfun2, use_bias=False)(encoded)
   encoded = krs.layers.Dense(embed_dim, activation='linear', use_bias=True)(encoded)
   codecvs = krs.models.Model(input_coord, encoded)
   codecvs.compile(optimizer=optim, loss=KLdivergence)
@@ -165,7 +166,7 @@ def parmtSNEcollectivevariable(infilename='', intopname='', embed_dim=2,
   print "Training model"
   for epoch in range(epochs):
     if epoch % shuffle_interval == 0:
-      X = traj2[np.random.permutation(n)[:m]]
+      X = traj2[np.random.permutation(n)[:m]] #/maxbox
       P = calculate_P(X)
     loss = 0.0
     for i in xrange(0, m, batch_size):
@@ -173,7 +174,7 @@ def parmtSNEcollectivevariable(infilename='', intopname='', embed_dim=2,
     print "Epoch: {}/{}, loss: {}".format(epoch+1, epochs, loss / batch_num)
 
   # Encoding and decoding the trajectory
-  coded_cvs = codecvs.predict(traj2/maxbox)
+  coded_cvs = codecvs.predict(traj2) #/maxbox)
   # Generating low-dimensional output
   if len(ofilename) > 0:
     print("Writing tSNE collective variables for the training set into %s" % ofilename)
@@ -263,9 +264,9 @@ def parmtSNEcollectivevariable(infilename='', intopname='', embed_dim=2,
         ofile.write(toprint)
       for i in range(embed_dim):
         if codecvs.layers[2].get_weights()[1][i]>0.0:
-          ofile.write("l2r_%i: MATHEVAL ARG=l2 FUNC=(x+%0.6f) PERIODIC=NO\n" % (i+1,codecvs.layers[2].get_weights()[1][i]))
+          ofile.write("l2r_%i: MATHEVAL ARG=l2_%i FUNC=(x+%0.6f) PERIODIC=NO\n" % (i+1,i+1,codecvs.layers[2].get_weights()[1][i]))
         else:
-          ofile.write("l2r_%i: MATHEVAL ARG=l2 FUNC=(x-%0.6f) PERIODIC=NO\n" % (i+1,-codecvs.layers[2].get_weights()[1][i]))
+          ofile.write("l2r_%i: MATHEVAL ARG=l2_%i FUNC=(x-%0.6f) PERIODIC=NO\n" % (i+1,i+1,-codecvs.layers[2].get_weights()[1][i]))
       toprint = "PRINT ARG="
       for i in range(embed_dim):
         toprint = toprint + "l2r_" + str(i+1) + ","
@@ -323,9 +324,9 @@ def parmtSNEcollectivevariable(infilename='', intopname='', embed_dim=2,
         ofile.write(toprint)
       for i in range(embed_dim):
         if codecvs.layers[3].get_weights()[1][i]>0.0:
-          ofile.write("l3r_%i: MATHEVAL ARG=l3 FUNC=(x+%0.6f) PERIODIC=NO\n" % (i+1,codecvs.layers[3].get_weights()[1][i]))
+          ofile.write("l3r_%i: MATHEVAL ARG=l3_%i FUNC=(x+%0.6f) PERIODIC=NO\n" % (i+1,i+1,codecvs.layers[3].get_weights()[1][i]))
         else:
-          ofile.write("l3r_%i: MATHEVAL ARG=l3 FUNC=(x-%0.6f) PERIODIC=NO\n" % (i+1,-codecvs.layers[3].get_weights()[1][i]))
+          ofile.write("l3r_%i: MATHEVAL ARG=l3_%i FUNC=(x-%0.6f) PERIODIC=NO\n" % (i+1,i+1,-codecvs.layers[3].get_weights()[1][i]))
       toprint = "PRINT ARG="
       for i in range(embed_dim):
         toprint = toprint + "l3r_" + str(i+1) + ","
@@ -403,9 +404,9 @@ def parmtSNEcollectivevariable(infilename='', intopname='', embed_dim=2,
         ofile.write(toprint)
       for i in range(embed_dim):
         if codecvs.layers[4].get_weights()[1][i]>0.0:
-          ofile.write("l4r_%i: MATHEVAL ARG=l4 FUNC=(x+%0.6f) PERIODIC=NO\n" % (i+1,codecvs.layers[4].get_weights()[1][i]))
+          ofile.write("l4r_%i: MATHEVAL ARG=l4_%i FUNC=(x+%0.6f) PERIODIC=NO\n" % (i+1,i+1,codecvs.layers[4].get_weights()[1][i]))
         else:
-          ofile.write("l4r_%i: MATHEVAL ARG=l4 FUNC=(x-%0.6f) PERIODIC=NO\n" % (i+1,-codecvs.layers[4].get_weights()[1][i]))
+          ofile.write("l4r_%i: MATHEVAL ARG=l4_%i FUNC=(x-%0.6f) PERIODIC=NO\n" % (i+1,i+1,-codecvs.layers[4].get_weights()[1][i]))
       toprint = "PRINT ARG="
       for i in range(embed_dim):
         toprint = toprint + "l4r_" + str(i+1) + ","
