@@ -65,7 +65,6 @@ def parmtSNEcollectivevariable(infilename='', intopname='', embed_dim=2,
     return P
 
   def calculate_P(X):
-    print "Computing pairwise distances..."
     n = X.shape[0]
     P = np.zeros([n, batch_size])
     for i in xrange(0, n, batch_size):
@@ -165,8 +164,9 @@ def parmtSNEcollectivevariable(infilename='', intopname='', embed_dim=2,
   # Learning  
   print "Training model"
   for epoch in range(epochs):
+    print "Computing pairwise distances..."
     if epoch % shuffle_interval == 0:
-      X = traj2[np.random.permutation(n)[:m]] #/maxbox
+      X = traj2[np.random.permutation(n)[:m]]
       P = calculate_P(X)
     loss = 0.0
     for i in xrange(0, m, batch_size):
