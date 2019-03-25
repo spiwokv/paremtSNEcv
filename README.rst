@@ -23,8 +23,10 @@ Install
 
 ::
 
-  pip install parmtSNEcv # comming soon
-  git clone 
+  # comming soon
+  pip install parmtSNEcv
+  # before
+  git clone https://github.com/spiwokv/parmtSNEcv.git
   cd parmtSNEcv
   pip install .
 
