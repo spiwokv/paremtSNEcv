@@ -22,6 +22,7 @@ Install
 -------
 
 ::
+
   pip install parmtSNEcv # comming soon
   git clone 
   cd parmtSNEcv
@@ -32,6 +33,7 @@ Usage
 -----
 
 ::
+
   usage: parmtSNEcv [-h] [-i INFILE] [-p INTOP] [-dim EMBED_DIM] [-boxx BOXX]
                     [-boxy BOXY] [-boxz BOXZ] [-nofit NOFIT] [-layers LAYERS]
                     [-layer1 LAYER1] [-layer2 LAYER2] [-layer3 LAYER3]
