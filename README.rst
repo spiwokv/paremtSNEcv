@@ -6,12 +6,12 @@ parmtSNEcv
 Discovery of collective variables using parametric tSNE
 -------------------------------------------------------
 
-Nonlinear dimensionality reduction techniques, such as t-distributed stochastic neighbor embedding (t-SNE, 1),
+Nonlinear dimensionality reduction techniques, such as t-distributed stochastic neighbor embedding (t-SNE) [1],
 are promising approaches for development of collective variables for enhanced sampling molecular simulations.
 Low dimensional embeddings calculated by these methods may be used to define bias forces or bias potentials
 in methods such as steered dynamics or metadynamics. The obstacle that must be addressed to apply such collective
 variables is caused by the fact that it is usually not possible to calculate low dimensional embeddings for new
-out-of-sample structures. To solve this we used so called parametric t-SNE (2). Standard t-SNE optimizes
+out-of-sample structures. To solve this we used so called parametric t-SNE [2]. Standard t-SNE optimizes
 low-dimensional embeddings to match high-dimensional data. Parametric t-SNE uses a feed-forward neuronal
 network to calculate low-dimensional embeddings from high-dimensional data. Instead, of optimizing
 low-dimensional embeddings it optimizes parameters of the neuronal network. After training, the network can be
@@ -92,5 +92,13 @@ Usage
                           no output)
     -plumed PLUMEDFILE    Output file for Plumed (default = plumed.dat)
 
+----------
+References
+----------
 
+.. [1] van der Maaten, L.J.P., Hinton, G.E. (2008) Visualizing Data Using t-SNE.
+   *Journal of Machine Learning Research* **9**, 2579–2605.
+   
+.. [2] van der Maaten, L.J.P. (2009) Learning a Parametric Embedding by Preserving Local Structure.
+   *Proceedings of the Twelth International Conference on Artificial Intelligence and Statistics* **5**, 384-391. 
 
