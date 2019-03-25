@@ -17,7 +17,7 @@ def parmtSNEcollectivevariable(infilename='', intopname='', embed_dim=2,
                                boxx=0.0, boxy=0.0, boxz=0.0, nofit=0,
                                layers=2, layer1=256, layer2=256, layer3=256,
                                actfun1='relu', actfun2='relu', actfun3='relu',
-                               optim='adam', epochs=100, batch_size=0,
+                               optim='adam', epochs=100, shuffle_interval=0, batch_size=0,
                                ofilename='', modelfile='', plumedfile=''):
 
   def Hbeta(D, beta):
@@ -146,7 +146,8 @@ def parmtSNEcollectivevariable(infilename='', intopname='', embed_dim=2,
     batch_num = 1
     batch_size = n
     m = n
-  shuffle_interval = epochs + 1
+  if shuffle_interval==0:
+    shuffle_interval = epochs + 1
 
   # Model building
   print "Building model"
@@ -164,7 +165,6 @@ def parmtSNEcollectivevariable(infilename='', intopname='', embed_dim=2,
   # Learning  
   print "Training model"
   for epoch in range(epochs):
-    print "Computing pairwise distances..."
     if epoch % shuffle_interval == 0:
       X = traj2[np.random.permutation(n)[:m]]
       P = calculate_P(X)
@@ -303,15 +303,15 @@ def parmtSNEcollectivevariable(infilename='', intopname='', embed_dim=2,
         toprint = toprint[:-1] + " PERIODIC=NO\n"
         ofile.write(toprint)
       for i in range(layer2):
-        if actfun1 == 'elu': printfun = "(exp(x)-1.0)*step(-x)+x*step(x)"
-        elif actfun1 == 'selu': printfun = "1.0507*(1.67326*exp(x)-1.67326)*step(-x)+1.0507*x*step(x)"
-        elif actfun1 == 'softplus': printfun = "log(1.0+exp(x))"
-        elif actfun1 == 'softsign': printfun = "x/(1.0+step(x)*x+step(-x)*(-x))"
-        elif actfun1 == 'relu': printfun = "step(x)*x"
-        elif actfun1 == 'tanh': printfun = "(exp(x)-exp(-x))/(exp(x)+exp(-x))"
-        elif actfun1 == 'sigmoid': printfun = "1.0/(1.0+exp(-x))"
-        elif actfun1 == 'hard_sigmoid': printfun = "step(x+2.5)*((0.2*(x)+0.5)-step(x-2.5)*(0.2*(x)-0.5))"
-        elif actfun1 == 'linear': printfun = "x"
+        if actfun2 == 'elu': printfun = "(exp(x)-1.0)*step(-x)+x*step(x)"
+        elif actfun2 == 'selu': printfun = "1.0507*(1.67326*exp(x)-1.67326)*step(-x)+1.0507*x*step(x)"
+        elif actfun2 == 'softplus': printfun = "log(1.0+exp(x))"
+        elif actfun2 == 'softsign': printfun = "x/(1.0+step(x)*x+step(-x)*(-x))"
+        elif actfun2 == 'relu': printfun = "step(x)*x"
+        elif actfun2 == 'tanh': printfun = "(exp(x)-exp(-x))/(exp(x)+exp(-x))"
+        elif actfun2 == 'sigmoid': printfun = "1.0/(1.0+exp(-x))"
+        elif actfun2 == 'hard_sigmoid': printfun = "step(x+2.5)*((0.2*(x)+0.5)-step(x-2.5)*(0.2*(x)-0.5))"
+        elif actfun2 == 'linear': printfun = "x"
         ofile.write("l2r_%i: MATHEVAL ARG=l2_%i FUNC=%s PERIODIC=NO\n" % (i+1,i+1,printfun))
       for i in range(embed_dim):
         toprint = "l3_%i: COMBINE ARG=" % (i+1)
@@ -363,15 +363,15 @@ def parmtSNEcollectivevariable(infilename='', intopname='', embed_dim=2,
         toprint = toprint[:-1] + " PERIODIC=NO\n"
         ofile.write(toprint)
       for i in range(layer2):
-        if actfun1 == 'elu': printfun = "(exp(x)-1.0)*step(-x)+x*step(x)"
-        elif actfun1 == 'selu': printfun = "1.0507*(1.67326*exp(x)-1.67326)*step(-x)+1.0507*x*step(x)"
-        elif actfun1 == 'softplus': printfun = "log(1.0+exp(x))"
-        elif actfun1 == 'softsign': printfun = "x/(1.0+step(x)*x+step(-x)*(-x))"
-        elif actfun1 == 'relu': printfun = "step(x)*x"
-        elif actfun1 == 'tanh': printfun = "(exp(x)-exp(-x))/(exp(x)+exp(-x))"
-        elif actfun1 == 'sigmoid': printfun = "1.0/(1.0+exp(-x))"
-        elif actfun1 == 'hard_sigmoid': printfun = "step(x+2.5)*((0.2*(x)+0.5)-step(x-2.5)*(0.2*(x)-0.5))"
-        elif actfun1 == 'linear': printfun = "x"
+        if actfun2 == 'elu': printfun = "(exp(x)-1.0)*step(-x)+x*step(x)"
+        elif actfun2 == 'selu': printfun = "1.0507*(1.67326*exp(x)-1.67326)*step(-x)+1.0507*x*step(x)"
+        elif actfun2 == 'softplus': printfun = "log(1.0+exp(x))"
+        elif actfun2 == 'softsign': printfun = "x/(1.0+step(x)*x+step(-x)*(-x))"
+        elif actfun2 == 'relu': printfun = "step(x)*x"
+        elif actfun2 == 'tanh': printfun = "(exp(x)-exp(-x))/(exp(x)+exp(-x))"
+        elif actfun2 == 'sigmoid': printfun = "1.0/(1.0+exp(-x))"
+        elif actfun2 == 'hard_sigmoid': printfun = "step(x+2.5)*((0.2*(x)+0.5)-step(x-2.5)*(0.2*(x)-0.5))"
+        elif actfun2 == 'linear': printfun = "x"
         ofile.write("l2r_%i: MATHEVAL ARG=l2_%i FUNC=%s PERIODIC=NO\n" % (i+1,i+1,printfun))
       for i in range(layer3):
         toprint = "l3_%i: COMBINE ARG=" % (i+1)
@@ -383,15 +383,15 @@ def parmtSNEcollectivevariable(infilename='', intopname='', embed_dim=2,
         toprint = toprint[:-1] + " PERIODIC=NO\n"
         ofile.write(toprint)
       for i in range(layer3):
-        if actfun1 == 'elu': printfun = "(exp(x)-1.0)*step(-x)+x*step(x)"
-        elif actfun1 == 'selu': printfun = "1.0507*(1.67326*exp(x)-1.67326)*step(-x)+1.0507*x*step(x)"
-        elif actfun1 == 'softplus': printfun = "log(1.0+exp(x))"
-        elif actfun1 == 'softsign': printfun = "x/(1.0+step(x)*x+step(-x)*(-x))"
-        elif actfun1 == 'relu': printfun = "step(x)*x"
-        elif actfun1 == 'tanh': printfun = "(exp(x)-exp(-x))/(exp(x)+exp(-x))"
-        elif actfun1 == 'sigmoid': printfun = "1.0/(1.0+exp(-x))"
-        elif actfun1 == 'hard_sigmoid': printfun = "step(x+2.5)*((0.2*(x)+0.5)-step(x-2.5)*(0.2*(x)-0.5))"
-        elif actfun1 == 'linear': printfun = "x"
+        if actfun3 == 'elu': printfun = "(exp(x)-1.0)*step(-x)+x*step(x)"
+        elif actfun3 == 'selu': printfun = "1.0507*(1.67326*exp(x)-1.67326)*step(-x)+1.0507*x*step(x)"
+        elif actfun3 == 'softplus': printfun = "log(1.0+exp(x))"
+        elif actfun3 == 'softsign': printfun = "x/(1.0+step(x)*x+step(-x)*(-x))"
+        elif actfun3 == 'relu': printfun = "step(x)*x"
+        elif actfun3 == 'tanh': printfun = "(exp(x)-exp(-x))/(exp(x)+exp(-x))"
+        elif actfun3 == 'sigmoid': printfun = "1.0/(1.0+exp(-x))"
+        elif actfun3 == 'hard_sigmoid': printfun = "step(x+2.5)*((0.2*(x)+0.5)-step(x-2.5)*(0.2*(x)-0.5))"
+        elif actfun3 == 'linear': printfun = "x"
         ofile.write("l3r_%i: MATHEVAL ARG=l3_%i FUNC=%s PERIODIC=NO\n" % (i+1,i+1,printfun))
       for i in range(embed_dim):
         toprint = "l4_%i: COMBINE ARG=" % (i+1)
