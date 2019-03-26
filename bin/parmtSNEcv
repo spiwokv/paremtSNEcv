@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-libnames = [('mdtraj', 'md'), ('numpy', 'np'), ('keras', 'krs'), ('argparse', 'arg'), ('datetime', 'dt')]
+libnames = [('mdtraj', 'md'), ('numpy', 'np'), ('keras', 'krs'), ('argparse', 'arg'), ('datetime', 'dt'), ('sys', 'sys')]
 
 for (name, short) in libnames:
   try:
@@ -145,11 +145,12 @@ modelfile = args.modelfile
 plumedfile = args.plumedfile
 if plumedfile[-4:] != '.dat':
   plumedfile = plumedfile + '.dat'
+fullcommand = str(sys.argv)
 
 parmtSNEcv.parmtSNEcollectivevariable(infilename, intopname, embed_dim,
                                       boxx, boxy, boxz, nofit,
                                       layers, layer1, layer2, layer3,
                                       actfun1, actfun2, actfun3,
                                       optim, epochs, shuffle_interval, batch_size,
-                                      ofilename, modelfile, plumedfile)
+                                      ofilename, modelfile, plumedfile, fullcommand)
 
