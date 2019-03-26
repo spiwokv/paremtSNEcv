@@ -224,9 +224,9 @@ def parmtSNEcollectivevariable(infilename='', intopname='', embed_dim=2,
     table, bonds = traj.topology.to_dataframe()
     atoms = table['serial'][:]
     ofile = open(plumedfile, "w")
-    if wholecommand != '':
+    if fullcommand != '':
       ofile.write("# command:\n")
-      ofile.write("# %s\n" % wholecommand)
+      ofile.write("# %s\n" % fullcommand)
     ofile.write("# final KL devergence: %f\n" % (loss/batch_num))
     ofile.write("WHOLEMOLECULES ENTITY0=1-%i\n" % np.max(atoms))
     ofile.write("FIT_TO_TEMPLATE STRIDE=1 REFERENCE=%s TYPE=OPTIMAL\n" % intopname)
