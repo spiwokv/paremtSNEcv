@@ -7,13 +7,13 @@ for (name, short) in libnames:
   try:
     lib = __import__(name)
   except:
-    print("Library %s is not installed, exiting" % name)
+    print("Library %s is not installed or not working properly, exiting" % name)
     exit(0)
   else:
     globals()[short] = lib
 
 
-def parmtSNEcollectivevariable(infilename='', intopname='', embed_dim=2,
+def parmtSNEcollectivevariable(infilename='', intopname='', embed_dim=2, perplexity=30,
                                boxx=0.0, boxy=0.0, boxz=0.0, nofit=0,
                                layers=2, layer1=256, layer2=256, layer3=256,
                                actfun1='relu', actfun2='relu', actfun3='relu',
@@ -27,14 +27,14 @@ def parmtSNEcollectivevariable(infilename='', intopname='', embed_dim=2,
     P = P/sumP
     return H, P
 
-  def x2p(X, tol=1e-5, perplexity=30.0):
+  def x2p(X, perplex, tol=1e-5):
     print("Computing pairwise distances...")
     (n, d) = X.shape
     sum_X = np.sum(np.square(X), 1)
     D = np.add(np.add(-2 * np.dot(X, X.T), sum_X).T, sum_X)
     P = np.zeros((n, n))
     beta = np.ones((n, 1))
-    logU = np.log(perplexity)
+    logU = np.log(perplex)
     for i in range(n):
       if i % 500 == 0:
         print("Computing P-values for point %d of %d..." % (i, n))
@@ -64,11 +64,11 @@ def parmtSNEcollectivevariable(infilename='', intopname='', embed_dim=2,
     print("Mean value of sigma: %f" % np.mean(np.sqrt(1 / beta)))
     return P
 
-  def calculate_P(X):
+  def calculate_P(X, perplex):
     n = X.shape[0]
     P = np.zeros([n, batch_size])
     for i in xrange(0, n, batch_size):
-      P_batch = x2p(X[i:i + batch_size])
+      P_batch = x2p(X[i:i + batch_size], perplex, tol=1e-5)
       P_batch[np.isnan(P_batch)] = 0
       P_batch = P_batch + P_batch.T
       P_batch = P_batch / P_batch.sum()
@@ -167,7 +167,7 @@ def parmtSNEcollectivevariable(infilename='', intopname='', embed_dim=2,
   for epoch in range(epochs):
     if epoch % shuffle_interval == 0:
       X = traj2[np.random.permutation(n)[:m]]
-      P = calculate_P(X)
+      P = calculate_P(X, perplexity, tol=1e-5)
     loss = 0.0
     for i in xrange(0, m, batch_size):
       loss += codecvs.train_on_batch(X[i:i+batch_size], P[i:i+batch_size])
