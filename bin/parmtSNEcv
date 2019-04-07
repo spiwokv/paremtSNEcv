@@ -6,7 +6,7 @@ for (name, short) in libnames:
   try:
     lib = __import__(name)
   except:
-    print("Library %s is not installed, exiting" % name)
+    print("Library %s is not installed or not working properly, exiting" % name)
     exit(0)
   else:
     globals()[short] = lib
