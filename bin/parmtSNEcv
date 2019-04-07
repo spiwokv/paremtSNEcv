@@ -25,6 +25,9 @@ help='Input topology in pdb, WARNING: the structure must be 1. centered in the P
 parser.add_argument('-dim', dest='embed_dim', default=2, type=int,
 help='Number of output dimensions (default 2)')
 
+parser.add_argument('-perplex', dest='perplex', default=30., type=float,
+help='Value of t-SNE perplexity (default 30.0)')
+
 parser.add_argument('-boxx', dest='boxx', default=0.0, type=float,
 help='Size of x coordinate of PBC box (from 0 to set value in nm)')
 
@@ -87,6 +90,7 @@ boxx = args.boxx
 boxy = args.boxy
 boxz = args.boxz
 embed_dim = args.embed_dim
+perplex = arg.perplex
 nofit = args.nofit
 if args.nofit == "True":
   nofit = 1
@@ -149,7 +153,7 @@ fullcommand = ""
 for item in sys.argv:
   fullcommand = fullcommand + item + " "
 
-parmtSNEcv.parmtSNEcollectivevariable(infilename, intopname, embed_dim,
+parmtSNEcv.parmtSNEcollectivevariable(infilename, intopname, embed_dim, perplex,
                                       boxx, boxy, boxz, nofit,
                                       layers, layer1, layer2, layer3,
                                       actfun1, actfun2, actfun3,
