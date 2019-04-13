@@ -90,7 +90,7 @@ boxx = args.boxx
 boxy = args.boxy
 boxz = args.boxz
 embed_dim = args.embed_dim
-perplex = arg.perplex
+perplex = args.perplex
 nofit = args.nofit
 if args.nofit == "True":
   nofit = 1
