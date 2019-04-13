@@ -64,11 +64,11 @@ def parmtSNEcollectivevariable(infilename='', intopname='', embed_dim=2, perplex
     print("Mean value of sigma: %f" % np.mean(np.sqrt(1 / beta)))
     return P
 
-  def calculate_P(X, perplex):
+  def calculate_P(X, perplex, tol):
     n = X.shape[0]
     P = np.zeros([n, batch_size])
     for i in xrange(0, n, batch_size):
-      P_batch = x2p(X[i:i + batch_size], perplex, tol=1e-5)
+      P_batch = x2p(X[i:i + batch_size], perplex, tol)
       P_batch[np.isnan(P_batch)] = 0
       P_batch = P_batch + P_batch.T
       P_batch = P_batch / P_batch.sum()
