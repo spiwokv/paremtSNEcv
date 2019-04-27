@@ -6,7 +6,7 @@ libnames = [('mdtraj', 'md'), ('numpy', 'np'), ('keras', 'krs'), ('argparse', 'a
 for (name, short) in libnames:
   try:
     lib = __import__(name)
-  except:
+  except ImportError:
     print("Library %s is not installed or not working properly, exiting" % name)
     exit(0)
   else:
@@ -96,7 +96,7 @@ def parmtSNEcollectivevariable(infilename='', intopname='', embed_dim=2, perplex
     print("Fitting trajectory")
     if nofit==0:
       traj.superpose(refpdb)
-  except:
+  except IOError:
     print("Cannot load %s or %s, exiting." % (infilename, intopname))
     exit(0)
   else:
