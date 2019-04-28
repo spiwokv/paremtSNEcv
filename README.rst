@@ -1,3 +1,5 @@
+|lgtm| |lgtmpy|
+
 ==========
 parmtSNEcv
 ==========
@@ -101,4 +103,13 @@ References
    
 .. [2] van der Maaten, L.J.P. (2009) Learning a Parametric Embedding by Preserving Local Structure.
    *Proceedings of the Twelth International Conference on Artificial Intelligence and Statistics* **5**, 384-391. 
+
+.. |lgtm| image:: https://img.shields.io/lgtm/alerts/g/spiwokv/parmtSNEcv.svg?logo=lgtm&logoWidth=18
+    :target: https://lgtm.com/projects/g/spiwokv/parmtSNEcv/alerts/
+    :alt: LGTM code alerts
+
+.. |lgtmpy| image:: https://img.shields.io/lgtm/alerts/g/spiwokv/parmtSNEcv.svg?logo=lgtm&logoWidth=18
+    :target: https://lgtm.com/projects/g/spiwokv/parmtSNEcv/alerts/
+    :alt: LGTM python quality
+
 
