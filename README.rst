@@ -108,8 +108,8 @@ References
     :target: https://lgtm.com/projects/g/spiwokv/parmtSNEcv/alerts/
     :alt: LGTM code alerts
 
-.. |lgtmpy| image:: https://img.shields.io/lgtm/alerts/g/spiwokv/parmtSNEcv.svg?logo=lgtm&logoWidth=18
-    :target: https://lgtm.com/projects/g/spiwokv/parmtSNEcv/alerts/
+.. |lgtmpy| image:: https://img.shields.io/lgtm/grade/python/g/spiwokv/parmtSNEcv.svg?logo=lgtm&logoWidth=18
+    :target: https://lgtm.com/projects/g/spiwokv/parmtSNEcv/context:python
     :alt: LGTM python quality
 
 
