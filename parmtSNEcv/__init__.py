@@ -150,7 +150,7 @@ def parmtSNEcollectivevariable(infilename='', intopname='', embed_dim=2, perplex
     shuffle_interval = epochs + 1
 
   # Model building
-  print "Building model"
+  print("Building model")
   input_coord = krs.layers.Input(shape=(trajsize[1]*3,))
   encoded = krs.layers.Dense(layer1, activation=actfun1, use_bias=False)(input_coord)
   if layers == 3:
@@ -163,7 +163,7 @@ def parmtSNEcollectivevariable(infilename='', intopname='', embed_dim=2, perplex
   codecvs.compile(optimizer=optim, loss=KLdivergence)
 
   # Learning  
-  print "Training model"
+  print("Training model")
   for epoch in range(epochs):
     if epoch % shuffle_interval == 0:
       X = traj2[np.random.permutation(n)[:m]]
@@ -171,7 +171,7 @@ def parmtSNEcollectivevariable(infilename='', intopname='', embed_dim=2, perplex
     loss = 0.0
     for i in xrange(0, m, batch_size):
       loss += codecvs.train_on_batch(X[i:i+batch_size], P[i:i+batch_size])
-    print "Epoch: {}/{}, loss: {}".format(epoch+1, epochs, loss / batch_num)
+    print("Epoch: {}/{}, loss: {}".format(epoch+1, epochs, loss / batch_num))
 
   # Encoding and decoding the trajectory
   coded_cvs = codecvs.predict(traj2) #/maxbox)
