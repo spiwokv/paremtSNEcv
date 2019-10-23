@@ -67,7 +67,7 @@ def parmtSNEcollectivevariable(infilename='', intopname='', embed_dim=2, perplex
   def calculate_P(X, perplex, tol):
     n = X.shape[0]
     P = np.zeros([n, batch_size])
-    for i in xrange(0, n, batch_size):
+    for i in range(0, n, batch_size):
       P_batch = x2p(X[i:i + batch_size], perplex, tol)
       P_batch[np.isnan(P_batch)] = 0
       P_batch = P_batch + P_batch.T
@@ -169,7 +169,7 @@ def parmtSNEcollectivevariable(infilename='', intopname='', embed_dim=2, perplex
       X = traj2[np.random.permutation(n)[:m]]
       P = calculate_P(X, perplexity, tol=1e-5)
     loss = 0.0
-    for i in xrange(0, m, batch_size):
+    for i in range(0, m, batch_size):
       loss += codecvs.train_on_batch(X[i:i+batch_size], P[i:i+batch_size])
     print("Epoch: {}/{}, loss: {}".format(epoch+1, epochs, loss / batch_num))
 
