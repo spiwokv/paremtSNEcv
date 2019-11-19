@@ -82,6 +82,9 @@ help='Prefix for output model files (experimental, default = no output)')
 parser.add_argument('-plumed', dest='plumedfile', default='plumed.dat',
 help='Output file for Plumed (default = plumed.dat)')
 
+parser.add_argument('-plumed2', dest='plumedfile2', default='plumed2.dat',
+help='Output file for Plumed >= 2.6 (default = plumed2.dat)')
+
 args = parser.parse_args()
 
 infilename = args.infile
@@ -149,6 +152,9 @@ modelfile = args.modelfile
 plumedfile = args.plumedfile
 if plumedfile[-4:] != '.dat':
   plumedfile = plumedfile + '.dat'
+plumedfile2 = args.plumedfile2
+if plumedfile2[-4:] != '.dat':
+  plumedfile2 = plumedfile2 + '.dat'
 fullcommand = ""
 for item in sys.argv:
   fullcommand = fullcommand + item + " "
@@ -158,5 +164,5 @@ parmtSNEcv.parmtSNEcollectivevariable(infilename, intopname, embed_dim, perplex,
                                       layers, layer1, layer2, layer3,
                                       actfun1, actfun2, actfun3,
                                       optim, epochs, shuffle_interval, batch_size,
-                                      ofilename, modelfile, plumedfile, fullcommand)
+                                      ofilename, modelfile, plumedfile, plumedfile2, fullcommand)
 

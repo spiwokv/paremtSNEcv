@@ -18,7 +18,7 @@ def parmtSNEcollectivevariable(infilename='', intopname='', embed_dim=2, perplex
                                layers=2, layer1=256, layer2=256, layer3=256,
                                actfun1='relu', actfun2='relu', actfun3='relu',
                                optim='adam', epochs=100, shuffle_interval=0, batch_size=0,
-                               ofilename='', modelfile='', plumedfile='', fullcommand=''):
+                               ofilename='', modelfile='', plumedfile='', plumedfile2='', fullcommand=''):
 
   def Hbeta(D, beta):
     P = np.exp(-D*beta)
