@@ -446,7 +446,7 @@ def parmtSNEcollectivevariable(infilename='', intopname='', embed_dim=2, perplex
       toprint = toprint[:-1] + "\n"
       ofile.write(toprint)
       ofile.write("NUM_LAYERS=3\n")
-      ofile.write("NUM_NODES=%i,%i,1\n" % (3*trajsize[1],layer1))
+      ofile.write("NUM_NODES=%i,%i,%i\n" % (3*trajsize[1],layer1,embed_dim))
       if actfun1 == 'tanh': 
         ofile.write("ACTIVATIONS=Tanh,Linear\n")
       else:
@@ -464,11 +464,11 @@ def parmtSNEcollectivevariable(infilename='', intopname='', embed_dim=2, perplex
           toprint = toprint + "%0.6f," % (codecvs.layers[2].get_weights()[0][j,i])
       toprint = toprint[:-1] + "\n"
       ofile.write(toprint)
-      toprint = "BIASES0="
-      for i in range(layer1):
-        toprint = toprint + "%0.6f," % (codecvs.layers[1].get_weights()[1][i])
-      toprint = toprint[:-1] + "\n"
-      ofile.write(toprint)
+      #toprint = "BIASES0="
+      #for i in range(layer1):
+      #  toprint = toprint + "%0.6f," % (codecvs.layers[1].get_weights()[1][i])
+      #toprint = toprint[:-1] + "\n"
+      #ofile.write(toprint)
       toprint = "BIASES1="
       for i in range(embed_dim):
         toprint = "%0.6f," % (codecvs.layers[2].get_weights()[1][i])
@@ -480,7 +480,6 @@ def parmtSNEcollectivevariable(infilename='', intopname='', embed_dim=2, perplex
         toprint = toprint + "ann.node-" + str(i) + ","
       toprint = toprint[:-1] + " STRIDE=100 FILE=COLVAR\n"
       ofile.write(toprint)
-      
     if layers==2:
       ofile.write("ANN ...\n")
       ofile.write("LABEL=ann\n")
@@ -490,7 +489,7 @@ def parmtSNEcollectivevariable(infilename='', intopname='', embed_dim=2, perplex
       toprint = toprint[:-1] + "\n"
       ofile.write(toprint)
       ofile.write("NUM_LAYERS=4\n")
-      ofile.write("NUM_NODES=%i,%i,%i,1\n" % (3*trajsize[1],layer1,layer2))
+      ofile.write("NUM_NODES=%i,%i,%i,%i\n" % (3*trajsize[1],layer1,layer2,embed_dim))
       if actfun1 == 'tanh' and actfun2 == 'tanh':
         ofile.write("ACTIVATIONS=Tanh,Tanh,Linear\n")
       else:
@@ -514,16 +513,16 @@ def parmtSNEcollectivevariable(infilename='', intopname='', embed_dim=2, perplex
           toprint = toprint + "%0.6f," % (codecvs.layers[3].get_weights()[0][j,i])
       toprint = toprint[:-1] + "\n"
       ofile.write(toprint)
-      toprint = "BIASES0="
-      for i in range(layer1):
-        toprint = toprint + "%0.6f," % (codecvs.layers[1].get_weights()[1][i])
-      toprint = toprint[:-1] + "\n"
-      ofile.write(toprint)
-      toprint = "BIASES1="
-      for i in range(layer2):
-        toprint = toprint + "%0.6f," % (codecvs.layers[2].get_weights()[1][i])
-      toprint = toprint[:-1] + "\n"
-      ofile.write(toprint)
+      #toprint = "BIASES0="
+      #for i in range(layer1):
+      #  toprint = toprint + "%0.6f," % (codecvs.layers[1].get_weights()[1][i])
+      #toprint = toprint[:-1] + "\n"
+      #ofile.write(toprint)
+      #toprint = "BIASES1="
+      #for i in range(layer2):
+      #  toprint = toprint + "%0.6f," % (codecvs.layers[2].get_weights()[1][i])
+      #toprint = toprint[:-1] + "\n"
+      #ofile.write(toprint)
       toprint = "BIASES2="
       for i in range(embed_dim):
         toprint = toprint + "%0.6f," % (codecvs.layers[3].get_weights()[1][i])
@@ -535,7 +534,6 @@ def parmtSNEcollectivevariable(infilename='', intopname='', embed_dim=2, perplex
         toprint = toprint + "ann.node-" + str(i) + ","
       toprint = toprint[:-1] + " STRIDE=100 FILE=COLVAR\n"
       ofile.write(toprint)
-
     if layers==3:
       ofile.write("ANN ...\n")
       ofile.write("LABEL=ann\n")
@@ -545,7 +543,7 @@ def parmtSNEcollectivevariable(infilename='', intopname='', embed_dim=2, perplex
       toprint = toprint[:-1] + "\n"
       ofile.write(toprint)
       ofile.write("NUM_LAYERS=5\n")
-      ofile.write("NUM_NODES=%i,%i,%i,%i,1\n" % (3*trajsize[1],layer1,layer2,layer3))
+      ofile.write("NUM_NODES=%i,%i,%i,%i,%i\n" % (3*trajsize[1],layer1,layer2,layer3,embed_dim))
       if actfun1 == 'tanh' and actfun2 == 'tanh' and actfun3 == 'tanh':
         ofile.write("ACTIVATIONS=Tanh,Tanh,Tanh,Linear\n")
       else:
@@ -575,21 +573,21 @@ def parmtSNEcollectivevariable(infilename='', intopname='', embed_dim=2, perplex
           toprint = toprint + "%0.6f," % (codecvs.layers[4].get_weights()[0][j,i])
       toprint = toprint[:-1] + "\n"
       ofile.write(toprint)
-      toprint = "BIASES0="
-      for i in range(layer1):
-        toprint = toprint + "%0.6f," % (codecvs.layers[1].get_weights()[1][i])
-      toprint = toprint[:-1] + "\n"
-      ofile.write(toprint)
-      toprint = "BIASES1="
-      for i in range(layer2):
-        toprint = toprint + "%0.6f," % (codecvs.layers[2].get_weights()[1][i])
-      toprint = toprint[:-1] + "\n"
-      ofile.write(toprint)
-      toprint = "BIASES2="
-      for i in range(layer3):
-        toprint = toprint + "%0.6f," % (codecvs.layers[3].get_weights()[1][i])
-      toprint = toprint[:-1] + "\n"
-      ofile.write(toprint)
+      #toprint = "BIASES0="
+      #for i in range(layer1):
+      #  toprint = toprint + "%0.6f," % (codecvs.layers[1].get_weights()[1][i])
+      #toprint = toprint[:-1] + "\n"
+      #ofile.write(toprint)
+      #toprint = "BIASES1="
+      #for i in range(layer2):
+      #  toprint = toprint + "%0.6f," % (codecvs.layers[2].get_weights()[1][i])
+      #toprint = toprint[:-1] + "\n"
+      #ofile.write(toprint)
+      #toprint = "BIASES2="
+      #for i in range(layer3):
+      #  toprint = toprint + "%0.6f," % (codecvs.layers[3].get_weights()[1][i])
+      #toprint = toprint[:-1] + "\n"
+      #ofile.write(toprint)
       toprint = "BIASES3="
       for i in range(embed_dim):
         toprint = toprint + "%0.6f," % (codecvs.layers[4].get_weights()[1][i])
