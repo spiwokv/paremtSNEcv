@@ -525,7 +525,7 @@ def parmtSNEcollectivevariable(infilename='', intopname='', embed_dim=2, perplex
       ofile.write(toprint)
       toprint = "BIASES2="
       for i in range(embed_dim):
-        toprint = toprint + "0.0,"
+        toprint = toprint + "%0.6f," % (codecvs.layers[3].get_weights()[1][i])
       toprint = toprint[:-1] + "\n"
       ofile.write(toprint)
       ofile.write("... ANN\n")
