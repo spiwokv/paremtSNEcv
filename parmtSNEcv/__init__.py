@@ -464,11 +464,11 @@ def parmtSNEcollectivevariable(infilename='', intopname='', embed_dim=2, perplex
           toprint = toprint + "%0.6f," % (codecvs.layers[2].get_weights()[0][j,i])
       toprint = toprint[:-1] + "\n"
       ofile.write(toprint)
-      #toprint = "BIASES0="
-      #for i in range(layer1):
-      #  toprint = toprint + "%0.6f," % (codecvs.layers[1].get_weights()[1][i])
-      #toprint = toprint[:-1] + "\n"
-      #ofile.write(toprint)
+      toprint = "BIASES0="
+      for i in range(layer1):
+        toprint = toprint + "0.0,"
+      toprint = toprint[:-1] + "\n"
+      ofile.write(toprint)
       toprint = "BIASES1="
       for i in range(embed_dim):
         toprint = "%0.6f," % (codecvs.layers[2].get_weights()[1][i])
@@ -513,19 +513,19 @@ def parmtSNEcollectivevariable(infilename='', intopname='', embed_dim=2, perplex
           toprint = toprint + "%0.6f," % (codecvs.layers[3].get_weights()[0][j,i])
       toprint = toprint[:-1] + "\n"
       ofile.write(toprint)
-      #toprint = "BIASES0="
-      #for i in range(layer1):
-      #  toprint = toprint + "%0.6f," % (codecvs.layers[1].get_weights()[1][i])
-      #toprint = toprint[:-1] + "\n"
-      #ofile.write(toprint)
-      #toprint = "BIASES1="
-      #for i in range(layer2):
-      #  toprint = toprint + "%0.6f," % (codecvs.layers[2].get_weights()[1][i])
-      #toprint = toprint[:-1] + "\n"
-      #ofile.write(toprint)
+      toprint = "BIASES0="
+      for i in range(layer1):
+        toprint = toprint + "0.0,"
+      toprint = toprint[:-1] + "\n"
+      ofile.write(toprint)
+      toprint = "BIASES1="
+      for i in range(layer2):
+        toprint = toprint + "0.0,"
+      toprint = toprint[:-1] + "\n"
+      ofile.write(toprint)
       toprint = "BIASES2="
       for i in range(embed_dim):
-        toprint = toprint + "%0.6f," % (codecvs.layers[3].get_weights()[1][i])
+        toprint = toprint + "0.0,"
       toprint = toprint[:-1] + "\n"
       ofile.write(toprint)
       ofile.write("... ANN\n")
