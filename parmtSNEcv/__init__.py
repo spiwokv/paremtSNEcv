@@ -18,7 +18,7 @@ def parmtSNEcollectivevariable(infilename='', intopname='', embed_dim=2, perplex
                                layers=2, layer1=256, layer2=256, layer3=256,
                                actfun1='relu', actfun2='relu', actfun3='relu',
                                optim='adam', epochs=100, shuffle_interval=0, batch_size=0,
-                               ofilename='', modelfile='', plumedfile='', fullcommand=''):
+                               ofilename='', modelfile='', plumedfile='', plumedfile2='', fullcommand=''):
 
   def Hbeta(D, beta):
     P = np.exp(-D*beta)
@@ -218,7 +218,7 @@ def parmtSNEcollectivevariable(infilename='', intopname='', embed_dim=2, perplex
       np.save(file=modelfile+"_4.npy", arr=codecvs.layers[4].get_weights())
 
   if plumedfile != '':
-    print("Writing Plumed input into %s" % plumedfile)
+    print("Writing Plumed < 2.6 input into %s" % plumedfile)
     print("")
     traj = md.load(infilename, top=intopname)
     table, bonds = traj.topology.to_dataframe()
@@ -414,6 +414,189 @@ def parmtSNEcollectivevariable(infilename='', intopname='', embed_dim=2, perplex
       toprint = "PRINT ARG="
       for i in range(embed_dim):
         toprint = toprint + "l4r_" + str(i+1) + ","
+      toprint = toprint[:-1] + " STRIDE=100 FILE=COLVAR\n"
+      ofile.write(toprint)
+    ofile.close()
+
+  if plumedfile2 != '':
+    print("Writing Plumed >= 2.6 input into %s" % plumedfile2)
+    print("")
+    traj = md.load(infilename, top=intopname)
+    table, bonds = traj.topology.to_dataframe()
+    atoms = table['serial'][:]
+    ofile = open(plumedfile2, "w")
+    if fullcommand != '':
+      ofile.write("# command:\n")
+      ofile.write("# %s\n" % fullcommand)
+    ofile.write("# final KL devergence: %f\n" % (loss/batch_num))
+    ofile.write("WHOLEMOLECULES ENTITY0=1-%i\n" % np.max(atoms))
+    ofile.write("FIT_TO_TEMPLATE STRIDE=1 REFERENCE=%s TYPE=OPTIMAL\n" % intopname)
+    for i in range(trajsize[1]):
+      ofile.write("p%i: POSITION ATOM=%i NOPBC\n" % (i+1,atoms[i]))
+    for i in range(trajsize[1]):
+      ofile.write("p%ix: COMBINE ARG=p%i.x COEFFICIENTS=%f PERIODIC=NO\n" % (i+1,i+1,1.0/maxbox))
+      ofile.write("p%iy: COMBINE ARG=p%i.y COEFFICIENTS=%f PERIODIC=NO\n" % (i+1,i+1,1.0/maxbox))
+      ofile.write("p%iz: COMBINE ARG=p%i.z COEFFICIENTS=%f PERIODIC=NO\n" % (i+1,i+1,1.0/maxbox))
+    if layers==1:
+      ofile.write("ANN ...\n")
+      ofile.write("LABEL=ann\n")
+      toprint = "ARG="
+      for j in range(trajsize[1]):
+        toprint = toprint + "p%ix,p%iy,p%iz," % (j+1,j+1,j+1)
+      toprint = toprint[:-1] + "\n"
+      ofile.write(toprint)
+      ofile.write("NUM_LAYERS=3\n")
+      ofile.write("NUM_NODES=%i,%i,%i\n" % (3*trajsize[1],layer1,embed_dim))
+      if actfun1 == 'tanh': 
+        ofile.write("ACTIVATIONS=Tanh,Linear\n")
+      else:
+        print("ERROR: Only tanh activation function supported in ANN module")
+        exit(0)
+      toprint = "WEIGHTS0="
+      for i in range(layer1):
+        for j in range(3*trajsize[1]):
+          toprint = toprint + "%0.6f," % (codecvs.layers[1].get_weights()[0][j,i])
+      toprint = toprint[:-1] + "\n"
+      ofile.write(toprint)
+      toprint = "WEIGHTS1="
+      for i in range(embed_dim):
+        for j in range(layer1):
+          toprint = toprint + "%0.6f," % (codecvs.layers[2].get_weights()[0][j,i])
+      toprint = toprint[:-1] + "\n"
+      ofile.write(toprint)
+      toprint = "BIASES0="
+      for i in range(layer1):
+        toprint = toprint + "0.0,"
+      toprint = toprint[:-1] + "\n"
+      ofile.write(toprint)
+      toprint = "BIASES1="
+      for i in range(embed_dim):
+        toprint = "%0.6f," % (codecvs.layers[2].get_weights()[1][i])
+      toprint = toprint[:-1] + "\n"
+      ofile.write(toprint)
+      ofile.write("... ANN\n")
+      toprint = "PRINT ARG="
+      for i in range(embed_dim):
+        toprint = toprint + "ann.node-" + str(i) + ","
+      toprint = toprint[:-1] + " STRIDE=100 FILE=COLVAR\n"
+      ofile.write(toprint)
+    if layers==2:
+      ofile.write("ANN ...\n")
+      ofile.write("LABEL=ann\n")
+      toprint = "ARG="
+      for j in range(trajsize[1]):
+        toprint = toprint + "p%ix,p%iy,p%iz," % (j+1,j+1,j+1)
+      toprint = toprint[:-1] + "\n"
+      ofile.write(toprint)
+      ofile.write("NUM_LAYERS=4\n")
+      ofile.write("NUM_NODES=%i,%i,%i,%i\n" % (3*trajsize[1],layer1,layer2,embed_dim))
+      if actfun1 == 'tanh' and actfun2 == 'tanh':
+        ofile.write("ACTIVATIONS=Tanh,Tanh,Linear\n")
+      else:
+        print("ERROR: Only tanh activation function supported in ANN module")
+        exit(0)
+      toprint = "WEIGHTS0="
+      for i in range(layer1):
+        for j in range(3*trajsize[1]):
+          toprint = toprint + "%0.6f," % (codecvs.layers[1].get_weights()[0][j,i])
+      toprint = toprint[:-1] + "\n"
+      ofile.write(toprint)
+      toprint = "WEIGHTS1="
+      for i in range(layer2):
+        for j in range(layer1):
+          toprint = toprint + "%0.6f," % (codecvs.layers[2].get_weights()[0][j,i])
+      toprint = toprint[:-1] + "\n"
+      ofile.write(toprint)
+      toprint = "WEIGHTS2="
+      for i in range(embed_dim):
+        for j in range(layer2):
+          toprint = toprint + "%0.6f," % (codecvs.layers[3].get_weights()[0][j,i])
+      toprint = toprint[:-1] + "\n"
+      ofile.write(toprint)
+      toprint = "BIASES0="
+      for i in range(layer1):
+        toprint = toprint + "0.0,"
+      toprint = toprint[:-1] + "\n"
+      ofile.write(toprint)
+      toprint = "BIASES1="
+      for i in range(layer2):
+        toprint = toprint + "0.0,"
+      toprint = toprint[:-1] + "\n"
+      ofile.write(toprint)
+      toprint = "BIASES2="
+      for i in range(embed_dim):
+        toprint = toprint + "%0.6f," % (codecvs.layers[3].get_weights()[1][i])
+      toprint = toprint[:-1] + "\n"
+      ofile.write(toprint)
+      ofile.write("... ANN\n")
+      toprint = "PRINT ARG="
+      for i in range(embed_dim):
+        toprint = toprint + "ann.node-" + str(i) + ","
+      toprint = toprint[:-1] + " STRIDE=100 FILE=COLVAR\n"
+      ofile.write(toprint)
+    if layers==3:
+      ofile.write("ANN ...\n")
+      ofile.write("LABEL=ann\n")
+      toprint = "ARG="
+      for j in range(trajsize[1]):
+        toprint = toprint + "p%ix,p%iy,p%iz," % (j+1,j+1,j+1)
+      toprint = toprint[:-1] + "\n"
+      ofile.write(toprint)
+      ofile.write("NUM_LAYERS=5\n")
+      ofile.write("NUM_NODES=%i,%i,%i,%i,%i\n" % (3*trajsize[1],layer1,layer2,layer3,embed_dim))
+      if actfun1 == 'tanh' and actfun2 == 'tanh' and actfun3 == 'tanh':
+        ofile.write("ACTIVATIONS=Tanh,Tanh,Tanh,Linear\n")
+      else:
+        print("ERROR: Only tanh activation function supported in ANN module")
+        exit(0)
+      toprint = "WEIGHTS0="
+      for i in range(layer1):
+        for j in range(3*trajsize[1]):
+          toprint = toprint + "%0.6f," % (codecvs.layers[1].get_weights()[0][j,i])
+      toprint = toprint[:-1] + "\n"
+      ofile.write(toprint)
+      toprint = "WEIGHTS1="
+      for i in range(layer2):
+        for j in range(layer1):
+          toprint = toprint + "%0.6f," % (codecvs.layers[2].get_weights()[0][j,i])
+      toprint = toprint[:-1] + "\n"
+      ofile.write(toprint)
+      toprint = "WEIGHTS2="
+      for i in range(layer3):
+        for j in range(layer2):
+          toprint = toprint + "%0.6f," % (codecvs.layers[3].get_weights()[0][j,i])
+      toprint = toprint[:-1] + "\n"
+      ofile.write(toprint)
+      toprint = "WEIGHTS3="
+      for i in range(embed_dim):
+        for j in range(layer3):
+          toprint = toprint + "%0.6f," % (codecvs.layers[4].get_weights()[0][j,i])
+      toprint = toprint[:-1] + "\n"
+      ofile.write(toprint)
+      toprint = "BIASES0="
+      for i in range(layer1):
+        toprint = toprint + "0.0,"
+      toprint = toprint[:-1] + "\n"
+      ofile.write(toprint)
+      toprint = "BIASES1="
+      for i in range(layer2):
+        toprint = toprint + "0.0,"
+      toprint = toprint[:-1] + "\n"
+      ofile.write(toprint)
+      toprint = "BIASES2="
+      for i in range(layer3):
+        toprint = toprint + "0.0,"
+      toprint = toprint[:-1] + "\n"
+      ofile.write(toprint)
+      toprint = "BIASES3="
+      for i in range(embed_dim):
+        toprint = toprint + "%0.6f," % (codecvs.layers[4].get_weights()[1][i])
+      toprint = toprint[:-1] + "\n"
+      ofile.write(toprint)
+      ofile.write("... ANN\n")
+      toprint = "PRINT ARG="
+      for i in range(embed_dim):
+        toprint = toprint + "ann.node-" + str(i) + ","
       toprint = toprint[:-1] + " STRIDE=100 FILE=COLVAR\n"
       ofile.write(toprint)
     ofile.close()
