@@ -74,7 +74,7 @@ parser.add_argument('-batch', dest='batch_size', default=0, type=int,
 help='Batch size (0 = no batches, default = 0)')
 
 parser.add_argument('-o', dest='ofile', default='',
-help='Output file with original and approximated collective variables (txt, default = no output)')
+help='Output file with values of t-SNE embeddings (txt, default = no output)')
 
 parser.add_argument('-model', dest='modelfile', default='',
 help='Prefix for output model files (experimental, default = no output)')
