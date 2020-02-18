@@ -88,8 +88,8 @@ Usage
     -shuffle_interval SHUFFLE_INTERVAL
                           Shuffle interval (default = number of epochs + 1)
     -batch BATCH_SIZE     Batch size (0 = no batches, default = 0)
-    -o OFILE              Output file with original and approximated collective
-                          variables (txt, default = no output)
+    -o OFILE              Output file with values of t-SNE embeddings
+                          (txt, default = no output)
     -model MODELFILE      Prefix for output model files (experimental, default =
                           no output)
     -plumed PLUMEDFILE    Output file for Plumed (default = plumed.dat)
