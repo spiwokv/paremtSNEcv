@@ -38,11 +38,11 @@ Usage
 
 ::
 
-  usage: parmtSNEcv [-h] [-i INFILE] [-p INTOP] [-dim EMBED_DIM] [-boxx BOXX]
-                    [-boxy BOXY] [-boxz BOXZ] [-nofit NOFIT] [-layers LAYERS]
-                    [-layer1 LAYER1] [-layer2 LAYER2] [-layer3 LAYER3]
-                    [-actfun1 ACTFUN1] [-actfun2 ACTFUN2] [-actfun3 ACTFUN3]
-                    [-optim OPTIM] [-epochs EPOCHS]
+  usage: parmtSNEcv [-h] [-i INFILE] [-p INTOP] [-dim EMBED_DIM] [-perplex PERPLEX]
+                    [-boxx BOXX] [-boxy BOXY] [-boxz BOXZ] [-nofit NOFIT]
+                    [-layers LAYERS] [-layer1 LAYER1] [-layer2 LAYER2]
+                    [-layer3 LAYER3] [-actfun1 ACTFUN1] [-actfun2 ACTFUN2]
+                    [-actfun3 ACTFUN3] [-optim OPTIM] [-epochs EPOCHS]
                     [-shuffle_interval SHUFFLE_INTERVAL] [-batch BATCH_SIZE]
                     [-o OFILE] [-model MODELFILE] [-plumed PLUMEDFILE]
   
@@ -58,6 +58,7 @@ Usage
     -p INTOP              Input topology in pdb, WARNING: the structure must be
                           1. centered in the PBC box and 2. must contain only
                           atoms to be analysed!
+    -perplex PERPLEX      Value of t-SNE perplexity (default 30.0)
     -dim EMBED_DIM        Number of output dimensions (default 2)
     -boxx BOXX            Size of x coordinate of PBC box (from 0 to set value
                           in nm)
