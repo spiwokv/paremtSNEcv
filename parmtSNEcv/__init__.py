@@ -79,16 +79,16 @@ def parmtSNEcollectivevariable(infilename='', intopname='', embed_dim=2, perplex
   def KLdivergence(P, Y):
     alpha = embed_dim - 1.
     sum_Y = krs.backend.sum(krs.backend.square(Y), axis=1)
-    eps = krs.backend.variable(10e-15)
     D = sum_Y + krs.backend.reshape(sum_Y, [-1, 1]) - 2 * krs.backend.dot(Y, krs.backend.transpose(Y))
     Q = krs.backend.pow(1 + D / alpha, -(alpha + 1) / 2)
-    Q *= krs.backend.variable(1 - np.eye(batch_size))
+    Q *= (1 - np.eye(batch_size))
     Q /= krs.backend.sum(Q)
     Q = krs.backend.maximum(Q, eps)
     C = krs.backend.log((P + eps) / (Q + eps))
     C = krs.backend.sum(P * C)
     return C
 
+  eps = krs.backend.variable(10e-15)
   try:
     print("Loading trajectory")
     refpdb = md.load_pdb(intopname)
