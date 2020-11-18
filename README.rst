@@ -100,7 +100,7 @@ References
 ----------
 
 .. [1] van der Maaten, L.J.P., Hinton, G.E. (2008) Visualizing Data Using t-SNE.
-   *Journal of Machine Learning Research* **9**, 2579–2605.
+   *Journal of Machine Learning Research* **9**, 2579-2605.
    
 .. [2] van der Maaten, L.J.P. (2009) Learning a Parametric Embedding by Preserving Local Structure.
    *Proceedings of the Twelth International Conference on Artificial Intelligence and Statistics* **5**, 384-391. 
