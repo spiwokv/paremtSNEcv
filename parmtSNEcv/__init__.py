@@ -1,7 +1,7 @@
 name = "parmtSNEcv"
 
 # Loading necessary libraries
-libnames = [('mdtraj', 'md'), ('numpy', 'np'), ('keras', 'krs'), ('argparse', 'arg'), ('datetime', 'dt')]
+libnames = [('mdtraj', 'md'), ('numpy', 'np'), ('tensorflow', 'tf'), ('keras', 'krs'), ('argparse', 'arg'), ('datetime', 'dt'), ('onnx2torch', 'onnx2torch'), ('tf2onnx','tf2onnx') , ('torch','torch'), ('tempfile','tempfile'), ('os','os') ]
 
 for (name, short) in libnames:
   try:
@@ -18,7 +18,7 @@ def parmtSNEcollectivevariable(infilename='', intopname='', embed_dim=2, perplex
                                layers=2, layer1=256, layer2=256, layer3=256,
                                actfun1='relu', actfun2='relu', actfun3='relu',
                                optim='adam', epochs=100, shuffle_interval=0, batch_size=0,
-                               ofilename='', modelfile='', plumedfile='', plumedfile2='', fullcommand=''):
+                               ofilename='', modelfile='', plumedfile=None, plumedfile2=None, plumedfile3=None, fullcommand=''):
 
   def Hbeta(D, beta):
     P = np.exp(-D*beta)
@@ -217,7 +217,7 @@ def parmtSNEcollectivevariable(infilename='', intopname='', embed_dim=2, perplex
       np.save(file=modelfile+"_3.npy", arr=codecvs.layers[3].get_weights())
       np.save(file=modelfile+"_4.npy", arr=codecvs.layers[4].get_weights())
 
-  if plumedfile != '':
+  if plumedfile:
     print("Writing Plumed < 2.6 input into %s" % plumedfile)
     print("")
     traj = md.load(infilename, top=intopname)
@@ -418,7 +418,7 @@ def parmtSNEcollectivevariable(infilename='', intopname='', embed_dim=2, perplex
       ofile.write(toprint)
     ofile.close()
 
-  if plumedfile2 != '':
+  if plumedfile2:
     print("Writing Plumed >= 2.6 input into %s" % plumedfile2)
     print("")
     traj = md.load(infilename, top=intopname)
@@ -600,5 +600,51 @@ def parmtSNEcollectivevariable(infilename='', intopname='', embed_dim=2, perplex
       toprint = toprint[:-1] + " STRIDE=100 FILE=COLVAR\n"
       ofile.write(toprint)
     ofile.close()
+
+  if plumedfile3:
+    print("Writing Plumed with PYTORCH_MODEL_CV into %s" % plumedfile3)
+    print("")
+    model_name = os.path.splitext(plumedfile3)[0] + '.pt'
+
+    traj = md.load(infilename, top=intopname)
+    table, bonds = traj.topology.to_dataframe()
+    atoms = table['serial'][:]
+    ofile = open(plumedfile3, "w")
+    if fullcommand != '':
+      ofile.write("# command:\n")
+      ofile.write("# %s\n" % fullcommand)
+    ofile.write("# final KL devergence: %f\n" % (loss/batch_num))
+    ofile.write("WHOLEMOLECULES ENTITY0=1-%i\n" % np.max(atoms))
+    ofile.write("FIT_TO_TEMPLATE STRIDE=1 REFERENCE=%s TYPE=OPTIMAL\n" % intopname)
+
+    ofile.write(f"ptm: PYTORCH_MODEL_CV FILE={model_name} ATOMS={','.join(map(str,atoms))}\n") 
+
+    with tempfile.NamedTemporaryFile() as onnx:
+        tf2onnx.convert.from_keras(codecvs,output_path=onnx.name)
+        torch_model = onnx2torch.convert(onnx.name)
+
+    rec_maxbox = 1./maxbox
+    dummy_input = torch.randn([1,3*trajsize[1]])
+    # traced_script_module = torch.jit.trace(lambda x: torch_model(x * rec_maxbox), dummy_input)
+    def scaled_model(x):
+        return torch_model(x.reshape(-1))
+
+    traced_script_module = torch.jit.trace(scaled_model, dummy_input)
+    traced_script_module.save(model_name) # XXX: jmeno
+
+    toprint = "PRINT ARG="
+    toprint += ','.join([f"ptm.node-{i}" for i in range(embed_dim) ])
+    toprint += " STRIDE=100 FILE=COLVAR\n"
+    ofile.write(toprint)
+    ofile.write("""
+#
+# XXX: add something which uses ptm derivatives (METAD, DUMPDERIVATIVES, ...)
+# XXX: otherwise Plumed does not allocate memory and PYTORCH_MODEL_CV breaks 
+#
+# DUMPDERIVATIVES ARG=ptm.* STRIDE=100 FILE=DERIVATIVES FMT=%15.4f
+""")
+    ofile.close()
+
+
   return coded_cvs
 

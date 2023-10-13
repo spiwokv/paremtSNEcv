@@ -79,11 +79,15 @@ help='Output file with values of t-SNE embeddings (txt, default = no output)')
 parser.add_argument('-model', dest='modelfile', default='',
 help='Prefix for output model files (experimental, default = no output)')
 
-parser.add_argument('-plumed', dest='plumedfile', default='plumed.dat',
-help='Output file for Plumed (default = plumed.dat)')
+parser.add_argument('-plumed', dest='plumedfile', 
+help='Output file for Plumed (default = no output)')
 
-parser.add_argument('-plumed2', dest='plumedfile2', default='plumed2.dat',
-help='Output file for Plumed >= 2.6 (default = plumed2.dat)')
+parser.add_argument('-plumed2', dest='plumedfile2',
+help='Output file for Plumed >= 2.6 (default = no output)')
+
+parser.add_argument('-plumed3', dest='plumedfile3',
+help='Output file for Plumed with PYTORCH_MODEL_CV (default - no output)')
+
 
 args = parser.parse_args()
 
@@ -150,19 +154,23 @@ else:
   ofilename = ''
 modelfile = args.modelfile
 plumedfile = args.plumedfile
-if plumedfile[-4:] != '.dat':
+if plumedfile and plumedfile[-4:] != '.dat':
   plumedfile = plumedfile + '.dat'
 plumedfile2 = args.plumedfile2
-if plumedfile2[-4:] != '.dat':
+if plumedfile2 and plumedfile2[-4:] != '.dat':
   plumedfile2 = plumedfile2 + '.dat'
+plumedfile3 = args.plumedfile3
+if plumedfile3 and plumedfile3[-4:] != '.dat':
+  plumedfile3 = plumedfile3 + '.dat'
 fullcommand = ""
 for item in sys.argv:
   fullcommand = fullcommand + item + " "
+
 
 parmtSNEcv.parmtSNEcollectivevariable(infilename, intopname, embed_dim, perplex,
                                       boxx, boxy, boxz, nofit,
                                       layers, layer1, layer2, layer3,
                                       actfun1, actfun2, actfun3,
                                       optim, epochs, shuffle_interval, batch_size,
-                                      ofilename, modelfile, plumedfile, plumedfile2, fullcommand)
+                                      ofilename, modelfile, plumedfile, plumedfile2, plumedfile3, fullcommand)
 
