@@ -159,13 +159,13 @@ if plumedfile and plumedfile[-4:] != '.dat':
 plumedfile2 = args.plumedfile2
 if plumedfile2 and plumedfile2[-4:] != '.dat':
   plumedfile2 = plumedfile2 + '.dat'
+plumedfile3 = args.plumedfile3
 if plumedfile3 and plumedfile3[-4:] != '.dat':
   plumedfile3 = plumedfile3 + '.dat'
 fullcommand = ""
 for item in sys.argv:
   fullcommand = fullcommand + item + " "
 
-plumedfile3 = args.plumedfile3
 
 parmtSNEcv.parmtSNEcollectivevariable(infilename, intopname, embed_dim, perplex,
                                       boxx, boxy, boxz, nofit,
